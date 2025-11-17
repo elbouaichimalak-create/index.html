@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ÉduVoyage — Ensemble pour l'avenir</title>
+<meta name="description" content="ÉduVoyage, association de voyage humanitaire pour l'accès à l'éducation des enfants défavorisés.">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+<div class="container header-inner">
+<h1 class="logo">ÉduVoyage</h1>
+<button id="nav-toggle" aria-label="Menu">☰</button>
+<nav id="main-nav" class="main-nav">
+<a href="#accueil">Accueil</a>
+<a href="#qui">Qui sommes-nous</a>
+<a href="#actions">Nos actions</a>
+<a href="#projets">Nos projets</a>
+<a href="#agir">Agir</a>
+<a href="#don">Faire un don</a>
+<a href="#actus">Actualités</a>
+<a href="#contact">Contact</a>
+</nav>
+</div>
+</header>
+
+<main>
+<!-- Accueil -->
+<section id="accueil" class="hero">
+<div class="hero-inner container">
+<div class="hero-text">
+<h2>Un enfant, un avenir — donnons accès à l’éducation à tous.</h2>
+<p>ÉduVoyage organise des voyages solidaires pour construire des écoles, former des enseignants et offrir du matériel scolaire aux enfants défavorisés.</p>
+<div class="hero-cta">
+<a class="btn primary" href="https://example.com/donate" target="_blank" rel="noopener">Faire un don</a>
+<a class="btn" href="https://example.com/join" target="_blank" rel="noopener">Rejoindre une mission</a>
+<a class="btn ghost" href="#projets">Découvrir nos projets</a>
+</div>
+</div>
+<div class="hero-image">
+<img src="https://via.placeholder.com/700x420?text=Enfants+à+l'%C3%A9cole" alt="Enfants à l'école">
+</div>
+</div>
+</section>
+
+<!-- Qui sommes-nous -->
+<section id="qui" class="container section">
+<h3>Qui sommes-nous ?</h3>
+<p>ÉduVoyage est une association qui œuvre pour l'accès à l'éducation dans les pays défavorisés. Nous croyons que chaque enfant mérite la chance d'apprendre et de grandir dans un environnement sûr et stimulant. Notre approche combine voyages solidaires et projets durables co-construits avec les communautés locales.</p>
+<div class="grid-2">
+<div>
+<h4>Notre équipe</h4>
+<ul>
+<li>Marie Dupont — Coordinatrice pédagogique</li>
+<li>Alexandre Petit — Responsable terrain</li>
+<li>Camille Laurent — Logistique & partenariats</li>
+</ul>
+</div>
+<div>
+<h4>Nos objectifs</h4>
+<ul>
+<li>Construire et rénover des salles de classe</li>
+<li>Distribuer des fournitures scolaires</li>
+<li>Former des enseignants locaux</li>
+<li>Parrainer des enfants pour assurer leur scolarité</li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- Nos actions -->
+<section id="actions" class="section alt">
+<div class="container">
+<h3>Nos actions</h3>
+<div class="cards">
+<article class="card">
+<div class="card-illustration">🏫</div>
+<h4>Construction de salles de classe</h4>
+<p>Co-construction avec les communautés locales pour créer des espaces sûrs d'apprentissage.</p>
+</article>
+<article class="card">
+<div class="card-illustration">🎒</div>
+<h4>Distribution de matériel scolaire</h4>
+<p>Rassemblement et envoi de fournitures adaptées aux besoins des écoles.</p>
+</article>
+<article class="card">
+<div class="card-illustration">👩‍🏫</div>
+<h4>Formation d’enseignants</h4>
+<p>Modules pratiques pour renforcer les compétences pédagogiques locales.</p>
+</article>
+<article class="card">
+<div class="card-illustration">🤝</div>
+<h4>Parrainage d’enfants</h4>
+<p>Appui scolaire et matériel pour assurer la scolarité des enfants suivis.</p>
+</article>
+</div>
+</div>
+</section>
+
+<!-- Nos projets -->
+<section id="projets" class="container section">
+<h3>Nos projets dans le monde</h3>
+<p class="muted">Clique sur un marqueur pour voir la fiche projet et accéder au lien de don.</p>
+<div id="map" style="height:460px; border-radius:10px; overflow:hidden;"></div>
+
+<div class="project-list">
+<article class="project-card">
+<h4>Projet Soleil — Mali</h4>
+<p><strong>Date :</strong> 2024 — <strong>Statut :</strong> En cours</p>
+<p><strong>Bénéficiaires :</strong> 150 enfants</p>
+<a class="btn small" href="https://example.com/donate?project=mali" target="_blank">Faire un don</a>
+</article>
+<article class="project-card">
+<h4>École Avenir — Madagascar</h4>
+<p><strong>Date :</strong> 2023 — <strong>Statut :</strong> Terminé</p>
+<p><strong>Bénéficiaires :</strong> 80 enfants</p>
+<a class="btn small" href="https://example.com/donate?project=madagascar" target="_blank">Faire un don</a>
+</article>
+<article class="project-card">
+<h4>Classe Espoir — Burkina Faso</h4>
+<p><strong>Date :</strong> 2025 — <strong>Statut :</strong> Prévu</p>
+<p><strong>Bénéficiaires :</strong> 100 enfants</p>
+<a class="btn small" href="https://example.com/donate?project=burkina" target="_blank">Faire un don</a>
+</article>
+<article class="project-card">
+<h4>Cartable Solidaire — Sénégal</h4>
+<p><strong>Date :</strong> 2024 — <strong>Statut :</strong> En cours</p>
+<p><strong>Bénéficiaires :</strong> 200 enfants</p>
+<a class="btn small" href="https://example.com/donate?project=senegal" target="_blank">Faire un don</a>
+</article>
+<article class="project-card">
+<h4>Apprendre Ensemble — Népal</h4>
+<p><strong>Date :</strong> 2025 — <strong>Statut :</strong> En cours</p>
+<p><strong>Bénéficiaires :</strong> 90 enfants</p>
+<a class="btn small" href="https://example.com/donate?project=nepal" target="_blank">Faire un don</a>
+</article>
+<article class="project-card">
+<h4>Éveil & Savoir — Bangladesh</h4>
+<p><strong>Date :</strong> 2023 — <strong>Statut :</strong> Terminé</p>
+<p><strong>Bénéficiaires :</strong> 140 enfants</p>
+<a class="btn small" href="https://example.com/donate?project=bangladesh" target="_blank">Faire un don</a>
+</article>
+</div>
+</section>
+
+<!-- Agir -->
+<section id="agir" class="section alt">
+<div class="container">
+<h3>Agir avec nous</h3>
+<div class="grid-2">
+<div>
+<h4>Devenir bénévole</h4>
+<form id="volunteer-form" class="form-vertical" onsubmit="return false;">
+<label>Nom <input type="text" name="name" placeholder="Ton nom"></label>
+<label>Email <input type="email" name="email" placeholder="email@exemple.com"></label>
+<label>Motivation <textarea name="msg" placeholder="Pourquoi rejoindre ?"></textarea></label>
+<button class="btn" type="submit">Envoyer (visuel)</button>
+</form>
+</div>
+<div>
+<h4>Missions à venir</h4>
+<ul>
+<li>Juin 2026 — Construction d'une salle à Ouagadougou</li>
+<li>Septembre 2026 — Distribution de fournitures au Mali</li>
+</ul>
+<h4>Conditions de participation</h4>
+<p>Majeur(e), vaccination à jour, engagement pour la durée du projet.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Faire un don -->
+<section id="don" class="container section">
+<h3>Faire un don</h3>
+<div class="don-grid">
+<div class="don-card">
+<h4>Don unique</h4>
+<a class="btn" href="https://example.com/donate?type=one" target="_blank">Don unique</a>
+</div>
+<div class="don-card">
+<h4>Don mensuel</h4>
+<a class="btn" href="https://example.com/donate?type=monthly" target="_blank">Don mensuel</a>
+</div>
+<div class="don-card">
+<h4>Parrainer un enfant</h4>
+<a class="btn" href="https://example.com/sponsor" target="_blank">Parrainer</a>
+</div>
+</div>
+</section>
+
+<!-- Actualités -->
+<section id="actus" class="section">
+<div class="container">
+<h3>Actualités</h3>
+<article class="news">
+<h4>Mission Madagascar — bilan</h4>
+<p>Publié le 15 octobre 2025 — Retour sur la mission, photos et témoignages.</p>
+</article>
+<article class="news">
+<h4>Lancement du programme de parrainage</h4>
+<p>Publié le 1er septembre 2025 — Comment parrainer un enfant ?</p>
+</article>
+</div>
+</section>
+
+<!-- Contact -->
+<section id="contact" class="container section">
+<h3>Contact</h3>
+<div class="grid-2">
+<form id="contact-form" class="form-vertical" onsubmit="return false;">
+<label>Nom <input type="text" name="name" placeholder="Ton nom"></label>
+<label>Email <input type="email" name="email" placeholder="email@exemple.com"></label>
+<label>Message <textarea name="message" placeholder="Écris ton message..."></textarea></label>
+<button class="btn" type="submit">Envoyer (visuel)</button>
+</form>
+
+<div class="contact-info">
+<p><strong>Adresse :</strong> 12 rue de la Solidarité, 75000 Paris</p>
+<p><strong>Téléphone :</strong> +33 1 23 45 67 89</p>
+<p><strong>Réseaux :</strong> <a href="#">Facebook</a> • <a href="#">Instagram</a></p>
+</div>
+</div>
+</section>
+</main>
+
+<footer class="site-footer">
+<div class="container">
+<p>© <span id="year"></span> ÉduVoyage — Tous droits réservés.</p>
+</div>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="script.js"></script>
+</body>
+</html>
