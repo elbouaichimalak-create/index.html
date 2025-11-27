@@ -1,316 +1,174 @@
-<!doctype html>
-<html lang="fr">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>ÉduVoyage — Ensemble pour l'avenir</title>
-<meta name="description" content="ÉduVoyage, association de voyage humanitaire pour l'accès à l'éducation des enfants défavorisés.">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
-<link rel="stylesheet" href="styles.css">
-</head>
-<body>
+document.addEventListener('DOMContentLoaded', function () {
+  // Year footer
+  const yearEl = document.getElementById('year');
+  if(yearEl) yearEl.textContent = new Date().getFullYear();
 
-<header class="site-header" role="banner">
-  <div class="container header-inner">
-    <h1 class="logo">ÉduVoyage</h1>
+  // Theme (dark mode) with persistence
+  const themeToggle = document.getElementById('theme-toggle');
+  const root = document.documentElement;
+  const storedTheme = localStorage.getItem('eduvoyage_theme');
+  if(storedTheme) root.setAttribute('data-theme', storedTheme);
+  updateThemeButton();
 
-    <!-- Dark mode toggle -->
-    <div class="header-controls" aria-hidden="false">
-      <button id="theme-toggle" aria-pressed="false" aria-label="Basculer thème sombre" title="Mode sombre">🌙</button>
-      <button id="nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>
-    </div>
+  if(themeToggle){
+    themeToggle.addEventListener('click', () => {
+      const current = root.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      if(next === 'dark') root.setAttribute('data-theme', 'dark');
+      else root.removeAttribute('data-theme');
+      localStorage.setItem('eduvoyage_theme', next === 'dark' ? 'dark' : 'light');
+      updateThemeButton();
+    });
+  }
+  function updateThemeButton(){
+    const isDark = root.getAttribute('data-theme') === 'dark';
+    if(themeToggle){
+      themeToggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+      themeToggle.textContent = isDark ? '☀️' : '🌙';
+      themeToggle.title = isDark ? 'Revenir au mode clair' : 'Passer en mode sombre';
+    }
+  }
 
-    <nav id="main-nav" class="main-nav" role="navigation" aria-label="Navigation principale">
-      <a href="#accueil">Accueil</a>
-      <a href="#qui">Qui sommes-nous</a>
-      <a href="#actions">Nos actions</a>
-      <a href="#projets">Nos projets</a>
-      <a href="#galerie">Galerie</a>
-      <a href="#temoignages">Témoignages</a>
-      <a href="#timeline">Timeline</a>
-      <a href="#agir">Agir</a>
-      <a href="#don">Faire un don</a>
-      <a href="#actus">Actualités</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </div>
-</header>
+  // Mobile nav toggle
+  const navToggle = document.getElementById('nav-toggle');
+  const mainNav = document.getElementById('main-nav');
+  if(navToggle && mainNav){
+    navToggle.addEventListener('click', () => {
+      const isOpen = mainNav.style.display === 'flex';
+      mainNav.style.display = isOpen ? 'none' : 'flex';
+      navToggle.setAttribute('aria-expanded', String(!isOpen));
+    });
+  }
 
-<main id="main" role="main">
+  // Smooth scroll (internal anchors)
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', function(e){
+      const target = document.querySelector(this.getAttribute('href'));
+      if(target){ e.preventDefault(); target.scrollIntoView({behavior:'smooth',block:'start'}); if(window.innerWidth<900 && mainNav) mainNav.style.display='none'; }
+    });
+  });
 
-  <!-- Accueil -->
-  <section id="accueil" class="hero section reveal">
-    <div class="hero-inner container">
-      <div class="hero-text">
-        <h2>Un enfant, un avenir — donnons accès à l’éducation à tous.</h2>
-        <p>ÉduVoyage organise des voyages solidaires pour construire des écoles, former des enseignants et offrir du matériel scolaire aux enfants défavorisés.</p>
-        <div class="hero-cta">
-          <a class="btn primary" href="https://example.com/donate" target="_blank" rel="noopener">Faire un don</a>
-          <a class="btn" href="https://example.com/join" target="_blank" rel="noopener">Rejoindre une mission</a>
-          <a class="btn ghost" href="#projets">Découvrir nos projets</a>
-        </div>
-      </div>
-      <!-- optional hero image placeholder -->
-      <div class="hero-image reveal">
-        <img src="IMG_5582.jpg" alt="Enfants à l'école">
-      </div>
-    </div>
-  </section>
+  // Form visual feedback (existing)
+  document.querySelectorAll('form').forEach(f => {
+    f.addEventListener('submit', e => {
+      e.preventDefault();
+      const btn = f.querySelector('button[type="submit"]');
+      if(!btn) return;
+      btn.textContent='Envoyé (visuel)';
+      btn.disabled=true;
+      setTimeout(()=>{
+        btn.textContent='Envoyer (visuel)';
+        btn.disabled=false;
+        f.reset();
+      },1400);
+    });
+  });
 
-  <!-- Image seule (inchangée) -->
-  <section id="image-seule" class="section reveal" style="text-align:center;">
-    <div class="container">
-      <img src="IMG_5582.jpg" alt="Enfants à l'école" class="full-img">
-    </div>
-  </section>
+  // Intersection Observer for reveal animations + trigger counters
+  const reveals = document.querySelectorAll('.reveal');
+  const options = {threshold: 0.12};
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('visible');
+        // if it's a counter container, start counters
+        if(entry.target.querySelectorAll){
+          const counts = entry.target.querySelectorAll('.count[data-target]');
+          counts.forEach(startCounter);
+        }
+        obs.unobserve(entry.target);
+      }
+    });
+  }, options);
+  reveals.forEach(r => observer.observe(r));
 
-  <!-- Qui sommes-nous -->
-  <section id="qui" class="container section reveal">
-    <h3>Qui sommes-nous ?</h3>
-    <p>ÉduVoyage est une association qui œuvre pour l'accès à l'éducation dans les pays défavorisés. Nous croyons que chaque enfant mérite la chance d'apprendre et de grandir dans un environnement sûr et stimulant. Notre approche combine voyages solidaires et projets durables co-construits avec les communautés locales.</p>
+  // Counter function
+  function startCounter(el){
+    if(el.dataset.started) return;
+    el.dataset.started = "true";
+    const target = +el.getAttribute('data-target');
+    const duration = 1400;
+    const frame = 20;
+    const totalFrames = Math.round(duration / frame);
+    let frameCount = 0;
+    const easeOutQuad = t => t*(2-t);
+    const counter = setInterval(() => {
+      frameCount++;
+      const progress = easeOutQuad(frameCount / totalFrames);
+      const val = Math.round(target * progress);
+      el.textContent = val;
+      if(frameCount === totalFrames){
+        clearInterval(counter);
+        el.textContent = target;
+      }
+    }, frame);
+  }
 
-    <div class="counters">
-      <div class="counter-card">
-        <div class="count" data-target="450">0</div>
-        <div class="label">Enfants aidés</div>
-      </div>
-      <div class="counter-card">
-        <div class="count" data-target="12">0</div>
-        <div class="label">Écoles construites</div>
-      </div>
-      <div class="counter-card">
-        <div class="count" data-target="30">0</div>
-        <div class="label">Bénévoles</div>
-      </div>
-      <div class="counter-card">
-        <div class="count" data-target="6">0</div>
-        <div class="label">Pays d'intervention</div>
-      </div>
-    </div>
+  // Back to top button
+  const backBtn = document.getElementById('back-to-top');
+  window.addEventListener('scroll', () => {
+    if(window.scrollY > 400) backBtn.classList.add('show'); else backBtn.classList.remove('show');
+  });
+  backBtn.addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
 
-    <div class="grid-2">
-      <div>
-        <h4>Notre équipe</h4>
-        <ul>
-          <li>Marie Dupont — Coordinatrice pédagogique</li>
-          <li>Alexandre Petit — Responsable terrain</li>
-          <li>Camille Laurent — Logistique & partenariats</li>
-        </ul>
-      </div>
-      <div>
-        <h4>Nos objectifs</h4>
-        <ul>
-          <li>Construire et rénover des salles de classe</li>
-          <li>Distribuer des fournitures scolaires</li>
-          <li>Former des enseignants locaux</li>
-          <li>Parrainer des enfants pour assurer leur scolarité</li>
-        </ul>
-      </div>
-    </div>
-  </section>
+  // Lightbox gallery
+  const galleryItems = document.querySelectorAll('.gallery-item');
+  const lightbox = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lightbox-img');
+  const lbClose = document.getElementById('lightbox-close');
+  const lbCaption = document.getElementById('lightbox-caption');
 
-  <!-- Nos actions -->
-  <section id="actions" class="section alt reveal">
-    <div class="container">
-      <h3>Nos actions</h3>
-      <div class="cards">
-        <article class="card">
-          <div class="card-illustration">🏫</div>
-          <h4>Construction de salles de classe</h4>
-          <p>Co-construction avec les communautés locales pour créer des espaces sûrs d'apprentissage.</p>
-        </article>
-        <article class="card">
-          <div class="card-illustration">🎒</div>
-          <h4>Distribution de matériel scolaire</h4>
-          <p>Rassemblement et envoi de fournitures adaptées aux besoins des écoles.</p>
-        </article>
-        <article class="card">
-          <div class="card-illustration">👩‍🏫</div>
-          <h4>Formation d’enseignants</h4>
-          <p>Modules pratiques pour renforcer les compétences pédagogiques locales.</p>
-        </article>
-        <article class="card">
-          <div class="card-illustration">🤝</div>
-          <h4>Parrainage d’enfants</h4>
-          <p>Appui scolaire et matériel pour assurer la scolarité des enfants suivis.</p>
-        </article>
-      </div>
-    </div>
-  </section>
+  galleryItems.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const src = btn.getAttribute('data-src');
+      const alt = btn.querySelector('img')?.alt || '';
+      lbImg.src = src;
+      lbImg.alt = alt;
+      lbCaption.textContent = alt;
+      lightbox.setAttribute('aria-hidden','false');
+      document.body.style.overflow = 'hidden';
+      lbClose.focus();
+    });
+  });
+  function closeLightbox(){
+    lightbox.setAttribute('aria-hidden','true');
+    lbImg.src = '';
+    document.body.style.overflow = '';
+  }
+  lbClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (e) => { if(e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && lightbox.getAttribute('aria-hidden') === 'false') closeLightbox(); });
 
-  <!-- Nos projets (carte) -->
-  <section id="projets" class="container section reveal">
-    <h3>Nos projets dans le monde</h3>
-    <p class="muted">Clique sur un marqueur pour voir la fiche projet et accéder au lien de don.</p>
-    <div id="map" style="height:460px; border-radius:10px; overflow:hidden;"></div>
+  // Initialize Leaflet map — 6 projets Afrique & Asie
+  try{
+    const map = L.map('map', {zoomControl:true}).setView([5.0,20.0],2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
 
-    <div class="project-list">
-      <article class="project-card">
-        <h4>Projet Soleil — Mali</h4>
-        <p><strong>Date :</strong> 2024 — <strong>Statut :</strong> En cours</p>
-        <p><strong>Bénéficiaires :</strong> 150 enfants</p>
-        <a class="btn small" href="https://example.com/donate?project=mali" target="_blank">Faire un don</a>
-      </article>
-      <!-- autres projets -->
-    </div>
-  </section>
+    const projects = [
+      {name:'Projet Soleil — Mali', coords:[12.6392,-8.0029], info:'En cours — 150 enfants', link:'https://example.com/donate?project=mali'},
+      {name:'École Avenir — Madagascar', coords:[-18.8792,47.5079], info:'Terminé — 80 enfants', link:'https://example.com/donate?project=madagascar'},
+      {name:'Classe Espoir — Burkina Faso', coords:[12.3714,-1.5197], info:'Prévu — 100 enfants', link:'https://example.com/donate?project=burkina'},
+      {name:'Cartable Solidaire — Sénégal', coords:[14.4974,-14.4524], info:'En cours — 200 enfants', link:'https://example.com/donate?project=senegal'},
+      {name:'Apprendre Ensemble — Népal', coords:[28.3949,84.1240], info:'En cours — 90 enfants', link:'https://example.com/donate?project=nepal'},
+      {name:'Éveil & Savoir — Bangladesh', coords:[23.6850,90.3563], info:'Terminé — 140 enfants', link:'https://example.com/donate?project=bangladesh'}
+    ];
 
-  <!-- Galerie (NEW) -->
-  <section id="galerie" class="container section reveal">
-    <h3>Galerie</h3>
-    <p class="muted">Clique sur une image pour l'agrandir.</p>
-    <div class="gallery">
-      <!-- Ajoute tes images réelles ici -->
-      <button class="gallery-item" data-src="IMG_5582.jpg" aria-label="Ouvrir image 1"><img src="IMG_5582.jpg" alt="Enfants à l'école"></button>
-      <button class="gallery-item" data-src="IMG_5590.jpg" aria-label="Ouvrir image 2"><img src="IMG_5590.jpg" alt="Atelier pédagogique"></button>
-      <button class="gallery-item" data-src="IMG_5600.jpg" aria-label="Ouvrir image 3"><img src="IMG_5600.jpg" alt="Distribution de fournitures"></button>
-      <button class="gallery-item" data-src="IMG_5610.jpg" aria-label="Ouvrir image 4"><img src="IMG_5610.jpg" alt="Formation enseignants"></button>
-    </div>
-  </section>
+    projects.forEach(p => {
+      const marker = L.circleMarker(p.coords,{radius:8,fillColor:'#ff6f91',color:'#ff6f91',weight:1,fillOpacity:0.9}).addTo(map);
+      marker.bindPopup(`<strong>${p.name}</strong><br>${p.info}<br><a href="${p.link}" target="_blank">Faire un don</a>`);
+    });
+  }catch(err){console.warn('Impossible d\'initialiser la carte Leaflet :',err);}
 
-  <!-- Lightbox (hidden) -->
-  <div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-label="Agrandir l'image">
-    <button id="lightbox-close" class="lightbox-close" aria-label="Fermer la fenêtre">✕</button>
-    <img id="lightbox-img" src="" alt="">
-    <div id="lightbox-caption" class="lightbox-caption"></div>
-  </div>
+  // Accessibility: allow keyboard to open gallery items (Enter)
+  galleryItems.forEach(btn=>{
+    btn.setAttribute('tabindex','0');
+    btn.addEventListener('keydown', e => { if(e.key === 'Enter') btn.click(); });
+  });
 
-  <!-- Témoignages (NEW) -->
-  <section id="temoignages" class="section alt reveal">
-    <div class="container">
-      <h3>Témoignages</h3>
-      <div class="testimonials">
-        <article class="testimonial reveal">
-          <p class="quote">« Participer à la mission m'a permis de comprendre l'impact réel de l'éducation ; voir les enfants apprendre est bouleversant. »</p>
-          <p class="who">— Aminata, enseignante locale</p>
-        </article>
-        <article class="testimonial reveal">
-          <p class="quote">« J'ai acquis des compétences pédagogiques que j'utilise encore aujourd'hui. »</p>
-          <p class="who">— Lucas, bénévole 2024</p>
-        </article>
-        <article class="testimonial reveal">
-          <p class="quote">« Grâce au parrainage mon fils peut aller à l'école tous les jours. »</p>
-          <p class="who">— Fatima, parent</p>
-        </article>
-      </div>
-    </div>
-  </section>
+  // Make sure clickable widgets have focus styles (simple)
+  document.querySelectorAll('button,a,input,textarea').forEach(el=>{
+    el.addEventListener('focus', () => el.classList.add('focused'));
+    el.addEventListener('blur', () => el.classList.remove('focused'));
+  });
 
-  <!-- Timeline (NEW) -->
-  <section id="timeline" class="container section reveal">
-    <h3>Timeline des projets</h3>
-    <div class="timeline">
-      <div class="timeline-item">
-        <div class="timeline-date">2023</div>
-        <div class="timeline-content"><h4>Création d'ÉduVoyage</h4><p>Lancement du programme et premières missions.</p></div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-date">2024</div>
-        <div class="timeline-content"><h4>1ère école construite au Mali</h4><p>150 élèves scolarisés.</p></div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-date">2025</div>
-        <div class="timeline-content"><h4>Lancement du parrainage</h4><p>Mise en place d'un programme durable de suivi.</p></div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-date">2026</div>
-        <div class="timeline-content"><h4>Objectif : Ouagadougou</h4><p>Construction prévue: Juin 2026.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Agir -->
-  <section id="agir" class="section alt">
-    <div class="container">
-      <h3>Agir avec nous</h3>
-      <div class="grid-2">
-        <div>
-          <h4>Devenir bénévole</h4>
-          <form id="volunteer-form" class="form-vertical" onsubmit="return false;">
-            <label>Nom <input type="text" name="name" placeholder="Ton nom" required></label>
-            <label>Email <input type="email" name="email" placeholder="email@exemple.com" required></label>
-            <label>Motivation <textarea name="msg" placeholder="Pourquoi rejoindre ?" required></textarea></label>
-            <button class="btn" type="submit">Envoyer (visuel)</button>
-          </form>
-        </div>
-        <div>
-          <h4>Missions à venir</h4>
-          <ul>
-            <li>Juin 2026 — Construction d'une salle à Ouagadougou</li>
-            <li>Septembre 2026 — Distribution de fournitures au Mali</li>
-          </ul>
-          <h4>Conditions de participation</h4>
-          <p>Majeur(e), vaccination à jour, engagement pour la durée du projet.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Faire un don -->
-  <section id="don" class="container section">
-    <h3>Faire un don</h3>
-    <div class="don-grid">
-      <div class="don-card">
-        <h4>Don unique</h4>
-        <a class="btn" href="https://example.com/donate?type=one" target="_blank">Don unique</a>
-      </div>
-      <div class="don-card">
-        <h4>Don mensuel</h4>
-        <a class="btn" href="https://example.com/donate?type=monthly" target="_blank">Don mensuel</a>
-      </div>
-      <div class="don-card">
-        <h4>Parrainer un enfant</h4>
-        <a class="btn" href="https://example.com/sponsor" target="_blank">Parrainer</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Actualités -->
-  <section id="actus" class="section">
-    <div class="container">
-      <h3>Actualités</h3>
-      <article class="news">
-        <h4>Mission Madagascar — bilan</h4>
-        <p>Publié le 15 octobre 2025 — Retour sur la mission, photos et témoignages.</p>
-      </article>
-      <article class="news">
-        <h4>Lancement du programme de parrainage</h4>
-        <p>Publié le 1er septembre 2025 — Comment parrainer un enfant ?</p>
-      </article>
-    </div>
-  </section>
-
-  <!-- Contact -->
-  <section id="contact" class="container section">
-    <h3>Contact</h3>
-    <div class="grid-2">
-      <form id="contact-form" class="form-vertical" onsubmit="return false;">
-        <label>Nom <input type="text" name="name" placeholder="Ton nom" required></label>
-        <label>Email <input type="email" name="email" placeholder="email@exemple.com" required></label>
-        <label>Message <textarea name="message" placeholder="Écris ton message..." required></textarea></label>
-        <button class="btn" type="submit">Envoyer (visuel)</button>
-      </form>
-
-      <div class="contact-info">
-        <p><strong>Adresse :</strong> 12 rue de la Solidarité, 75000 Paris</p>
-        <p><strong>Téléphone :</strong> +33 1 23 45 67 89</p>
-        <p><strong>Réseaux :</strong> <a href="#">Facebook</a> • <a href="#">Instagram</a></p>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<!-- Back to top -->
-<button id="back-to-top" aria-label="Retour en haut">↑</button>
-
-<footer class="site-footer" role="contentinfo">
-  <div class="container">
-    <p>© <span id="year"></span> ÉduVoyage — Tous droits réservés.</p>
-  </div>
-</footer>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<script src="script.js"></script>
-</body>
-</html>
+});
